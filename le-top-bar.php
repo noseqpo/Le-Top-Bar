@@ -57,11 +57,9 @@ add_action('admin_menu', 'ltb_register_admin_page');
 
 function ltb_admin_page_content()
 {
-    // Define la ruta a la carpeta de iconos.
     $icon_path = plugin_dir_path(__FILE__) . 'icons/';
     $icon_url = plugin_dir_url(__FILE__) . 'icons/';
 
-    // Obtiene todos los archivos SVG dentro de la carpeta de iconos.
     $icons = glob($icon_path . '*.svg');
 
     ?>
@@ -80,7 +78,7 @@ function ltb_admin_page_content()
         <p>Insert one of the following codes to use an icon:</p>
         <div class="icon-list">
             <?php foreach ($icons as $icon) : ?>
-                <?php $icon_name = basename($icon); // Obtiene el nombre del archivo ?>
+                <?php $icon_name = basename($icon);  ?>
                 <div class="icon-item">
                     <img src="<?php echo esc_url($icon_url . $icon_name); ?>" alt="<?php echo esc_attr($icon_name); ?>" />
                     <p><code>{icon:<?php echo esc_html($icon_name); ?>}</code></p>
@@ -214,7 +212,6 @@ function ltb_sanitize_settings($input)
     if (isset ($input['text'])) {
         $new_input['text'] = sanitize_textarea_field($input['text']);
     }
-
 
     return $new_input;
 }
