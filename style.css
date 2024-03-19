@@ -1,0 +1,33 @@
+#le-top-bar {
+    overflow: hidden;
+    white-space: nowrap;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+}
+
+#le-top-bar div {
+    display: inline-block;
+    animation: marquee linear infinite;
+}
+
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+body.admin-bar #le-top-bar {
+    top: 32px;
+}
+
+@media screen and (max-width: 782px) {
+    body.admin-bar #le-top-bar {
+        top: 46px;
+    }
+}
