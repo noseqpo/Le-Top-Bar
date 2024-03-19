@@ -12,6 +12,16 @@ function ltb_enqueue_styles()
 }
 add_action('wp_enqueue_scripts', 'ltb_enqueue_styles');
 
+function ltb_enqueue_styles_admin($hook) {
+    if ('tools_page_le-top-bar-settings' !== $hook) {
+        return;
+    }
+    wp_enqueue_style('le-top-bar-admin-style', plugin_dir_url(__FILE__) . 'admin-style.css');
+}
+
+add_action('admin_enqueue_scripts', 'ltb_enqueue_styles_admin');
+
+
 function ltb_enqueue_color_picker($hook_suffix)
 {
     if ('tools_page_le-top-bar-settings' !== $hook_suffix) {
@@ -47,6 +57,13 @@ add_action('admin_menu', 'ltb_register_admin_page');
 
 function ltb_admin_page_content()
 {
+    // Define la ruta a la carpeta de iconos.
+    $icon_path = plugin_dir_path(__FILE__) . 'icons/';
+    $icon_url = plugin_dir_url(__FILE__) . 'icons/';
+
+    // Obtiene todos los archivos SVG dentro de la carpeta de iconos.
+    $icons = glob($icon_path . '*.svg');
+
     ?>
     <div class="wrap">
         <h2>Top Bar Settings</h2>
@@ -57,9 +74,23 @@ function ltb_admin_page_content()
             submit_button();
             ?>
         </form>
+        
+        <!-- Sección de iconos -->
+        <h3>Available Icons</h3>
+        <p>Insert one of the following codes to use an icon:</p>
+        <div class="icon-list">
+            <?php foreach ($icons as $icon) : ?>
+                <?php $icon_name = basename($icon); // Obtiene el nombre del archivo ?>
+                <div class="icon-item">
+                    <img src="<?php echo esc_url($icon_url . $icon_name); ?>" alt="<?php echo esc_attr($icon_name); ?>" />
+                    <p><code>{icon:<?php echo esc_html($icon_name); ?>}</code></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
     <?php
 }
+
 
 function ltb_register_settings()
 {
@@ -130,7 +161,18 @@ function ltb_add_top_bar()
     $text = $options['text'] ?? 'This is a simple top bar!';
 
     $text = esc_html($text);
-    $text = str_replace("\n", ' · ', $text);
+
+    $icon_url = plugin_dir_url(__FILE__) . 'icons/';
+    $pattern = '/\{icon:(.*?)\}/i';
+    $text = preg_replace_callback($pattern, function($matches) use ($icon_url) {
+        $icon_name = $matches[1];
+        $icon_path = $icon_url . $icon_name;
+        if(file_exists(plugin_dir_path(__FILE__) . 'icons/' . $icon_name)) {
+            return '<img src="' . esc_url($icon_path) . '" alt="' . esc_attr($icon_name) . '" style="vertical-align: middle;">';
+        } else {
+            return $matches[0];
+        }
+    }, $text);
 
     ?>
     <script>
@@ -139,8 +181,7 @@ function ltb_add_top_bar()
             if (topBarText) {
                 var speed = 250; // Pixels por segundo
 
-                // Calcula el ancho del texto (ahora duplicado)
-                var textWidth = topBarText.offsetWidth / 2; // Dividir por 2 porque el texto está duplicado
+                var textWidth = topBarText.offsetWidth / 2; 
 
                 var containerWidth = topBarText.parentElement.offsetWidth;
                 var totalWidth = textWidth + containerWidth;
@@ -170,7 +211,6 @@ function ltb_sanitize_settings($input)
         $new_input['background_color'] = sanitize_hex_color($input['background_color']);
     if (isset ($input['text_color']))
         $new_input['text_color'] = sanitize_hex_color($input['text_color']);
-
     if (isset ($input['text'])) {
         $new_input['text'] = sanitize_textarea_field($input['text']);
     }

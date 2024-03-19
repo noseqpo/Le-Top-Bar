@@ -1,0 +1,23 @@
+.icon-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.icon-item {
+    flex-basis: 20%; /* Ajusta esto según cuántos elementos desees por fila */
+    box-sizing: border-box;
+    padding: 10px;
+    text-align: center;
+    background-color: #333 !important; /* Color de fondo oscuro */
+    color: #fff; /* Color de texto claro */
+    margin: 10px; /* Añade un poco de espacio entre los elementos */
+    border-radius: 5px; /* Opcional: Añade bordes redondeados */
+}
+
+.icon-item img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Asegura que la imagen no tenga espacio extra debajo */
+    margin: 0 auto 10px; /* Centra la imagen y añade espacio debajo antes del texto */
+}
